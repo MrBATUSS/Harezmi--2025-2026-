@@ -1,34 +1,38 @@
+//KUTUPHANELER
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+
 //SENSORLER
 int mq4_pin = A0;    //ANALOG 0 MQ-4
 int mq135_pin = A1;  //ANALOG 1 MQ-135
 int mq136_pin = A2;  //ANALOG 2 MQ-136
 
-//RGB_LED
-int redPin = 10;
-int greenPin = 9;
-int bluePin = 8;
-
 //VERILER
 int mq136_value;
 int mq135_value;
 int mq4_value;
-
+ 
 void setup() {
   Serial.begin(9600);                            //BILGISAYAR ILE ILETISIMI **9600 HIZINDA** BASLATIYORUZ BURDAN GELEN VERILERI OKUYCAZ
-  pinMode(mq4_pin & mq135_pin & mq136_pin, INPUT);           //PINLERI INPUT(GIRIS) MODUNA ALIYORUZ SENSORLER KARTA VERI AKISI VEREBILMASI ICIN
-  pinMode(redPin & greenPin & bluePin, OUTPUT);  //LEDIN BAGLI OLDUGU DIGITAL PINLERI OUTPUT(CIKIS) MODUNA ALIYORUZ BURDAN KART KOSULLAR SAGLANDIĞINDA(0,1) VOLTAJ VERECEK
+  pinMode(mq4_pin, INPUT);
+  pinMode(mq135_pin, INPUT);
+  pinMode(mq136_pin, INPUT);
+
+  lcd.init();
+  lcd.backlight();
+  lcd.setCursor(0,0);
 }
 
 void mq136() {
   mq136_value = analogRead(mq136_pin);                  //MQ-136 NIN DONDURDUGU DEGERI DEGISKENE VERIYORUZ
   Serial.println("--MQ136--: " + String(mq136_value));  //VERIYI EKRANA YAZDIRIYORUZ
-  //FALAN FILAN - REDD
 }
 
 void mq135() {
   mq135_value = analogRead(mq135_pin);               //MQ-135 IN DONDURDUGU DEGERI DEGISKENE VERIYORUZ
   Serial.println("MQ-135: " + String(mq135_value));  //VERIYI EKRANA YAZDIRIYORUZ
-  //FALAN FILAN - REDD
 }
 
 void mq4() {
@@ -37,9 +41,26 @@ void mq4() {
   //FALAN FILAN - REDD
 }
 
+void screen() {
+  lcd.clear();
+
+  //MQ_136
+  lcd.setCursor(0, 0);
+  lcd.print("MQ_136: ");
+  lcd.setCursor(7,0);
+  lcd.print(mq136_value);
+
+  //MQ_135
+  lcd.setCursor(0, 1);
+  lcd.print("MQ_135:");
+  lcd.setCursor(7,1);
+  lcd.print(mq135_value);
+}
+
 void loop() {
-  delay(500);
-  mq4();
+  delay(1000);
+  //mq4();
   mq135();
   mq136();
+  screen();
 }
